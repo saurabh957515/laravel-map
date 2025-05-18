@@ -3,8 +3,11 @@
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\test;
     use App\Http\Controllers\NoteController;
+    use Inertia\Inertia;
 
-
+    Route::get('/', function () {
+    return Inertia::render('Welcome/Index');
+    })->name('home');
 
 
 
