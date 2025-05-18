@@ -1,31 +1,29 @@
 import React, { useEffect, useState, type ReactNode } from "react";
 import Map from "@arcgis/core/Map";
-type props = {
-    basemap?: string;
-    children: ReactNode;
-};
-export function ArcGISMap({ basemap = "topo-vector", children }: props) {
-    const [map, setMap] = useState<any>(null);
+import type MapType from "@arcgis/core/Map"; // import type only (if you use npm package)
 
-    useEffect(() => {
-        const mapInstance = new Map({ basemap });
-        setMap(mapInstance);
 
-        return () => {
-            setMap(null);
-        };
-    }, [basemap]);
+type props ={
+  basemap?:string,
+  children:ReactNode
+}
+export function ArcGISMap({ basemap = "topo-vector", children }:props) {
+const [map, setMap] = useState<MapType | null>(null);
 
-    return (
-        <>
-            {React.Children.map(children, (child) =>
-                React.isValidElement(child)
-                    ? React.cloneElement(
-                          child as React.ReactElement<{ map: any }>,
-                          { map }
-                      )
-                    : child
-            )}
-        </>
-    );
+  useEffect(() => {
+    const mapInstance = new Map({ basemap });
+    setMap(mapInstance);
+
+    return () => {
+      setMap(null);
+    };
+  }, [basemap]);
+
+  return (
+    <>
+      {React.Children.map(children, child =>
+        React.isValidElement(child) ? React.cloneElement(child as any, { map }) : child
+      )}
+    </>
+  );
 }

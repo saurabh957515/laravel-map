@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import MapView from "@arcgis/core/views/MapView";
+import type MapViewType from "@arcgis/core/views/MapView";
 
-export function MapViewContainer({ map=null, center = [77, 28], zoom = 5, style={} }) {
+export function MapViewContainer({ map=null, center = [77, 28], zoom = 5 }) {
   const viewDiv = useRef(null);
-  const [view, setView] = useState<any>(null);
+const [view, setView] = useState<MapViewType | null>(null);
 
   useEffect(() => {
     if (!map) return;
@@ -23,5 +24,5 @@ export function MapViewContainer({ map=null, center = [77, 28], zoom = 5, style=
     };
   }, [map, center, zoom]);
 
-  return <div ref={viewDiv} style={style || { width: "100%", height: "500px" }} />;
+  return <div ref={viewDiv} style={ { width: "100%", height: "500px" }} />;
 }
