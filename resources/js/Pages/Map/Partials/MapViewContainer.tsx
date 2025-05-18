@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import MapView from "@arcgis/core/views/MapView";
 
-export function MapViewContainer({ map, center = [77, 28], zoom = 5, style }) {
+export function MapViewContainer({ map=null, center = [77, 28], zoom = 5, style={} }) {
   const viewDiv = useRef(null);
-  const [view, setView] = useState(null);
+  const [view, setView] = useState<any>(null);
 
   useEffect(() => {
     if (!map) return;
