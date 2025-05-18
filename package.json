@@ -26,6 +26,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@arcgis/core": "^4.32.10",
         "@headlessui/react": "^2.2.3",
         "@heroicons/react": "^2.2.0",
         "@inertiajs/react": "^2.0.9",

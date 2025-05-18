@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 
 import {
     Dialog,
@@ -19,6 +19,7 @@ import {
     DocumentDuplicateIcon,
     FolderIcon,
     HomeIcon,
+    MapPinIcon,
     UsersIcon,
     XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -26,13 +27,21 @@ import {
     ChevronDownIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
+import { log } from "console";
 
-const navigation = [
-    { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-    { name: "Map", href: "#", icon: UsersIcon, current: false },
-    { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
+const getCurrentIcon = (icon: string) => {
+    switch (icon) {
+        case "dashboard":
+            return <HomeIcon className="h-6 w-6" />;
+            break;
+        case "map":
+            return <MapPinIcon className="h-6 w-6" />;
+            break;
+        case "records":
+            return <CalendarIcon className="h-6 w-6" />;
+    }
+};
 const teams = [
     { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
     { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
@@ -46,9 +55,15 @@ const userNavigation = [
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
+interface LayoutProps {
+    header?: ReactNode;
+    children: ReactNode;
+}
 
-export default function Layout() {
+export default function Layout({ children }: LayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { auth, current, navigation } = usePage().props;
+    console.log(current);
 
     return (
         <>
@@ -197,28 +212,20 @@ export default function Layout() {
                             >
                                 <li>
                                     <ul role="list" className="-mx-2 space-y-1">
-                                        {navigation.map((item) => (
+                                        {navigation.map((item: any) => (
                                             <li key={item.name}>
-                                                <a
+                                                <Link
                                                     href={item.href}
                                                     className={classNames(
-                                                        item.current
+                                                        item.key === current
                                                             ? "bg-indigo-700 text-white"
                                                             : "text-indigo-200 hover:bg-indigo-700 hover:text-white",
                                                         "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold"
                                                     )}
                                                 >
-                                                    <item.icon
-                                                        aria-hidden="true"
-                                                        className={classNames(
-                                                            item.current
-                                                                ? "text-white"
-                                                                : "text-indigo-200 group-hover:text-white",
-                                                            "size-6 shrink-0"
-                                                        )}
-                                                    />
-                                                    {item.name}
-                                                </a>
+                                                    {getCurrentIcon(item?.key)}
+                                                    {item.label}
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>
@@ -341,7 +348,7 @@ export default function Layout() {
                                                 aria-hidden="true"
                                                 className="ml-4 text-sm/6 font-semibold text-gray-900"
                                             >
-                                                Tom Cook
+                                                {auth?.user?.name}
                                             </span>
                                             <ChevronDownIcon
                                                 aria-hidden="true"
@@ -371,9 +378,7 @@ export default function Layout() {
                     </div>
 
                     <main className="py-10 ">
-                        <div className="px-4 sm:px-6 lg:px-8">
-                            {/* Your content */}
-                        </div>
+                        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
                     </main>
                 </div>
             </div>

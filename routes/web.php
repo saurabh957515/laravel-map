@@ -5,17 +5,44 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Auth/Login', [
+$navigation = [
+    ['label' => 'Dashboard', 'href' => 'dashboard', 'key' => 'dashboard'],
+    ['label' => 'Map', 'href' => 'map', 'key' => 'map'],
+    ['label' => 'Records', 'href' => 'records', 'key' => 'records'],
+];
+
+
+Route::get('/', function () use ($navigation) {
+    return Inertia::render('Dashboard', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+          'navigation' => $navigation,
+        'current' => 'dashboard',
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/map', function () use ($navigation) {
+    return Inertia::render('Map/Index', [
+        'navigation' => $navigation,
+        'current' => Route::currentRouteName(),
+    ]);
+})->middleware(['auth'])->name('map');
+
+Route::get('/records', function () use ($navigation) {
+    return Inertia::render('Records/Index', [
+        'navigation' => $navigation,
+        'current' => Route::currentRouteName(),
+    ]);
+})->middleware(['auth'])->name('records');
+
+
+Route::get('/dashboard', function () use ($navigation) {
+    return Inertia::render('Dashboard', [
+        'navigation' => $navigation,
+        'current' => Route::currentRouteName(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
