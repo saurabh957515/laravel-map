@@ -1,22 +1,27 @@
-    <?php
+<?php
 
-    use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\test;
-    use App\Http\Controllers\NoteController;
-    use Inertia\Inertia;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-    Route::get('/', function () {
-    return Inertia::render('Welcome/Index');
-    })->name('home');
+Route::get('/', function () {
+    return Inertia::render('Auth/Login', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
 
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    // Route::get('/note',[NoteController::class,'index'])->name('note.index');
-    // Route::get('/note/create',[NoteController::class,'create'])->name('note.create');
-    // Route::post('/note',[NoteController::class,'store'])->name('note.store');
-    // Route::get('/note/${id}',[NoteController::class,'show'])->name('note.show');
-    // Route::get('/note/${id}/edit',[NoteController::class,'edit'])->name('note.edit');
-    // Route::put('/note/${id}',[NoteController::class,'update'])->name('note.update');
-    // Route::delete('/note/${id}',[NoteController::class,'destroy'])->name('note.destory');
-
-    Route::resource('note',NoteController::class);
+require __DIR__.'/auth.php';
